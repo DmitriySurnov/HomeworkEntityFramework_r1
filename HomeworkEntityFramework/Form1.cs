@@ -4,11 +4,9 @@ namespace HomeworkEntityFramework
 {
     public partial class FormLinqRequests : Form
     {
-        private readonly DataBase db;
         public FormLinqRequests()
         {
             InitializeComponent();
-            db = new DataBase();
         }
 
         private void ClearDataGridView()
@@ -45,6 +43,7 @@ namespace HomeworkEntityFramework
         {
             ClearDataGridView();
             AddColumnsDataGridView(new List<(string, string)> { ("PlayerName", "Имя игрока") });
+            using var db = new DataBase();
             AddDataDataGridView(Requests.NameOfPlayers(db));
         }
 
@@ -52,6 +51,7 @@ namespace HomeworkEntityFramework
         {
             ClearDataGridView();
             AddColumnsDataGridView(new List<(string, string)> { ("PlayerName", "Имя игрока"), ("NameClass", "Название класса") });
+            using var db = new DataBase();
             AddRowsDataGridView(Requests.NameOfPlayersAndNameOfClass(db));
         }
 
@@ -59,6 +59,7 @@ namespace HomeworkEntityFramework
         {
             ClearDataGridView();
             AddColumnsDataGridView(new List<(string, string)> { ("PlayerName", "Имя игрока"), ("Skills", "Умения") });
+            using var db = new DataBase();
             AddRowsDataGridView(Requests.NameOfPlayersAndNameOfSpell(db));
         }
 
@@ -66,6 +67,7 @@ namespace HomeworkEntityFramework
         {
             ClearDataGridView();
             AddColumnsDataGridView(new List<(string, string)> { ("NameClass", "Название класса"), ("Skills", "Умения") });
+            using var db = new DataBase();
             AddRowsDataGridView(Requests.NameOfClassAndNameOfSpell(db));
         }
 
@@ -93,6 +95,7 @@ namespace HomeworkEntityFramework
             {
                 ClearText();
                 ClearcomboBox();
+                using var db = new DataBase();
                 FillingComboBox(Requests.NameOfClass(db));
             }
         }
@@ -141,8 +144,9 @@ namespace HomeworkEntityFramework
                 return true;
         }
 
-        private bool IsUniquePlayerName(string namePlayer)
+        private static bool IsUniquePlayerName(string namePlayer)
         {
+            using var db = new DataBase();
             if (Requests.UniquePlayerName(db, namePlayer) != 0)
             {
                 ErrorMessages($"Игрок с именем {namePlayer} существует");
@@ -151,26 +155,30 @@ namespace HomeworkEntityFramework
             return true;
         }
 
-        private void AddDataTheTableCharactersClass(string nameClass)
+        private static void AddDataTheTableCharactersClass(string nameClass)
         {
+            using var db = new DataBase();
             db.CharactersClass.Add(new CharactersClass(nameClass));
             db.SaveChanges();
         }
 
         private void AddDataTheTableCharacters(string playerName, int idClass)
         {
+            using var db = new DataBase();
             db.Characters.Add(new Characters(playerName, idClass));
             db.SaveChanges();
         }
 
-        private void AddDataTheTableCharachtersExpirience(int idplayer)
+        private static void AddDataTheTableCharachtersExpirience(int idplayer)
         {
+            using var db = new DataBase();
             db.CharachtersExpirience.Add(new CharachtersExpirience(idplayer));
             db.SaveChanges();
         }
 
         private int ReceiveIdClass(string nameClass)
         {
+            using var db = new DataBase();
             int idClass = Requests.IdClass(db, nameClass);
             if (idClass == 0)
             {
@@ -189,6 +197,7 @@ namespace HomeworkEntityFramework
             {
                 return;
             }
+            using var db = new DataBase();
             AddDataTheTableCharacters(textBoxPlayerName.Text,
                     ReceiveIdClass(comboBoxPlayerClass.Text));
             AddDataTheTableCharachtersExpirience(Requests.IdPlayers(db, textBoxPlayerName.Text));
